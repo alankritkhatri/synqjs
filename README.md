@@ -69,12 +69,13 @@ graph TD
     Worker -->|save status| MongoDB
     Queue -->|read status| MongoDB
     
-    style CLI fill:#e1f5fe
-    style Queue fill:#f3e5f5
-    style Redis fill:#ffebee
-    style Worker fill:#e8f5e8
-    style MongoDB fill:#fff3e0
-    style LuaScripts fill:#fce4ec
+    style CLI fill:#4A90E2,stroke:#333,stroke-width:2px,color:#fff
+    style Queue fill:#7ED321,stroke:#333,stroke-width:2px,color:#fff
+    style Redis fill:#F5A623,stroke:#333,stroke-width:2px,color:#fff
+    style Worker fill:#BD10E0,stroke:#333,stroke-width:2px,color:#fff
+    style MongoDB fill:#50E3C2,stroke:#333,stroke-width:2px,color:#fff
+    style LuaScripts fill:#D0021B,stroke:#333,stroke-width:2px,color:#fff
+    style System fill:#9013FE,stroke:#333,stroke-width:2px,color:#fff
 ```
 
 ### Components
