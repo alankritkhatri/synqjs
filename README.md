@@ -50,6 +50,35 @@ node src/worker.js
 
 ## Architecture
 
+```mermaid
+graph TD
+    CLI["🖥️ CLI Interface<br/>(cli.js)"] 
+    Queue["⚡ Queue System<br/>(queue.js)"]
+    Redis[("🔴 Redis<br/>Job Queue")]
+    Worker["🔄 Worker<br/>(worker.js)"]
+    MongoDB[("🍃 MongoDB<br/>Job Persistence")]
+    LuaScripts["📜 Lua Scripts<br/>Atomic Operations"]
+    
+    CLI -->|submit job| Queue
+    CLI -->|status/cancel| Queue
+    Queue -->|enqueue| Redis
+    Queue -->|uses| LuaScripts
+    LuaScripts -->|atomic ops| Redis
+    Worker -->|poll jobs| Redis
+    Worker -->|execute command| System["💻 System<br/>Shell Commands"]
+    Worker -->|save status| MongoDB
+    Queue -->|read status| MongoDB
+    
+    style CLI fill:#e1f5fe
+    style Queue fill:#f3e5f5
+    style Redis fill:#ffebee
+    style Worker fill:#e8f5e8
+    style MongoDB fill:#fff3e0
+    style LuaScripts fill:#fce4ec
+```
+
+### Components
+
 - **CLI** - Command-line interface for job management
 - **Queue** - Redis-based job queuing with Lua scripts
 - **Worker** - Background job processor
