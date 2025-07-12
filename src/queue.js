@@ -19,7 +19,7 @@ redis.defineCommand("cancelJob", {
 
 export async function submitJob(command) {
 try {
-    const jobID = `job-${Date.now()}`;
+    const jobID = `job-${uuidv4()}`;
     const payload = JSON.stringify({ command, createdAt: new Date() });
 
     const result = await redis.enqueueJob(
