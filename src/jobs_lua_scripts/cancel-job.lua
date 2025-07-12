@@ -5,7 +5,7 @@ end
 local jobData = redis.call("HGET", KEYS[1], ARGV[1])
 local job = cjson.decode(jobData)
 
--- Mark as cancelled
+
 job.status = "cancelled"
 job.cancelledAt = ARGV[2]
 
