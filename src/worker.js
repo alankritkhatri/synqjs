@@ -36,7 +36,10 @@ try {
           output: stdout || stderr,
         };
         await db.updateOne({ jobID }, { $set: result });
-        console.log(`${jobID} done: ${result.status}`);
+
+        // Clean up Redis data after successful MongoDB save
+        await redis.hdel("jobs:hash", jobID);
+        console.log(`${jobID} done: ${result.status} - Redis data cleaned up`);
       });
 } catch (error) {
   console.log(error)

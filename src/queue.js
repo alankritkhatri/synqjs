@@ -1,12 +1,18 @@
 import fs from "fs";
 import path from "path";
-import {redis} from "./db/redis.js";
-import {connect} from "./db/mongodb.js";
+import { redis, JOB_TTL } from "./db/redis.js";
+import { connect } from "./db/mongodb.js";
 import { v4 as uuidv4 } from "uuid";
 
 // redis operations
-const luaScript = fs.readFileSync(path.join(process.cwd(), "src/jobs_lua_scripts/add-job.lua"), "utf8");
-const cancelLuaScript = fs.readFileSync(path.join(process.cwd(), "src/jobs_lua_scripts/cancel-job.lua"), "utf8");
+const luaScript = fs.readFileSync(
+  path.join(process.cwd(), "src/jobs_lua_scripts/add-job.lua"),
+  "utf8"
+);
+const cancelLuaScript = fs.readFileSync(
+  path.join(process.cwd(), "src/jobs_lua_scripts/cancel-job.lua"),
+  "utf8"
+);
 
 redis.defineCommand("enqueueJob", {
   numberOfKeys: 2,
@@ -20,7 +26,7 @@ redis.defineCommand("cancelJob", {
 
 // Job submission logic
 export async function submitJob(command) {
-try {
+  try {
     const jobID = `job-${uuidv4()}`;
     const payload = JSON.stringify({ command, createdAt: new Date() });
 
@@ -28,12 +34,13 @@ try {
       "jobs:hash",
       "jobs:queue",
       jobID,
-      payload
+      payload,
+      JOB_TTL
     );
     console.log(`Job Submitted: ${jobID} - Status: ${result}`);
-} catch (error) {
-  console.log(error)
-}
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 export async function cancelJob(jobID) {
