@@ -31,7 +31,6 @@ async function runWorker() {
     const { command } = job;
     console.log(`Executing ${jobID}: ${command}`);
 
-    // Save to MongoDB if available
     if (db) {
       await db.insertOne({
         jobID,
@@ -49,7 +48,6 @@ async function runWorker() {
           output: stdout || stderr,
         };
 
-        // Update MongoDB if available
         if (db) {
           await db.updateOne({ jobID }, { $set: result });
         }

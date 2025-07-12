@@ -1,6 +1,6 @@
 {
   "name": "synqjs",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "",
   "license": "ISC",
   "author": "",
@@ -13,8 +13,8 @@
   },
   "main": "src/cli.js",
   "scripts": {
-    "test": "node tests/simple-race-test.js",
-    "test:race": "node tests/simple-race-test.js",
+    "test": "node tests/race-test.js",
+    "test:race": "node tests/race-test.js",
     "test:load": "node tests/load-test.js",
     "example": "node examples/simple-example.js",
     "example:simple": "node examples/simple-example.js",
