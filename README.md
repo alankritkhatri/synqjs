@@ -37,7 +37,7 @@ npm install
 
 ### Usage
 
-There are **two ways** to use the Synq queue system:
+There are **three ways** to use the Synq queue system:
 
 #### Method 1: CLI Interface (Command Line)
 
