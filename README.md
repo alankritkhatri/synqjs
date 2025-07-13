@@ -28,22 +28,60 @@ npm install
 
 ### Usage
 
-#### Submit a Job
+There are **two ways** to use the Synq queue system:
+
+#### Method 1: CLI Interface (Command Line)
+
+##### Submit a Job
 ```bash
 node src/cli.js submit "echo Hello World"
 ```
 
-#### Check Job Status
+##### Check Job Status
 ```bash
 node src/cli.js status job-1234567890
 ```
 
-#### Cancel a Job
+##### Cancel a Job
 ```bash
 node src/cli.js cancel job-1234567890
 ```
 
-#### Start Worker
+#### Method 2: Programmatic Interface (JavaScript/Node.js)
+
+You can also use the queue system directly in your JavaScript/Node.js applications by importing the functions:
+
+```javascript
+import { submitJob, getJobStatus, cancelJob } from "./src/queue.js";
+
+// Submit a job programmatically
+await submitJob("echo Hello from script");
+
+// Check job status
+await getJobStatus("job-1234567890");
+
+// Cancel a job
+await cancelJob("job-1234567890");
+```
+
+##### Example Script
+```javascript
+// example-script.js
+import { submitJob } from "./src/queue.js";
+
+async function runBatchJobs() {
+  // Submit multiple jobs
+  await submitJob("echo Processing file 1");
+  await submitJob("echo Processing file 2");
+  await submitJob("ls -la");
+  
+  console.log("All jobs submitted!");
+}
+
+runBatchJobs().catch(console.error);
+```
+
+#### Start Worker (Required for both methods)
 ```bash
 node src/worker.js
 ```
