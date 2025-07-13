@@ -22,7 +22,16 @@ mongodb
 ```
 
 ### Installation
+
+#### Option 1: Install as npm package
 ```bash
+npm install synqjs
+```
+
+#### Option 2: Local development
+```bash
+git clone <repository-url>
+cd synq
 npm install
 ```
 
@@ -47,7 +56,7 @@ node src/cli.js status job-1234567890
 node src/cli.js cancel job-1234567890
 ```
 
-#### Method 2: Programmatic Interface (JavaScript/Node.js)
+#### Method 2:  Programmatic Function Calls (JavaScript/Node.js)
 
 You can also use the queue system directly in your JavaScript/Node.js applications by importing the functions:
 
@@ -81,7 +90,45 @@ async function runBatchJobs() {
 runBatchJobs().catch(console.error);
 ```
 
-#### Start Worker (Required for both methods)
+#### Method 3: Hybrid Approach (CLI + Programmatic)
+
+You can combine both methods in your workflow - use scripts for batch operations and CLI for manual management:
+
+```javascript
+// batch-processor.js
+import { submitJob } from "./src/queue.js";
+
+async function processBatch() {
+  const tasks = [
+    "python data_processor.py --file=data1.csv",
+    "python data_processor.py --file=data2.csv", 
+    "python data_processor.py --file=data3.csv"
+  ];
+  
+  // Submit jobs programmatically
+  for (const task of tasks) {
+    await submitJob(task);
+  }
+  
+  console.log(`✅ Submitted ${tasks.length} batch jobs`);
+}
+
+processBatch().catch(console.error);
+```
+
+Then use CLI for monitoring and management:
+```bash
+# Run your batch script
+node batch-processor.js
+
+# Monitor jobs via CLI
+node src/cli.js status job-1234567890
+
+# Cancel a job if needed
+node src/cli.js cancel job-1234567890
+```
+
+#### Start Worker (Required for all methods)
 ```bash
 node src/worker.js
 ```
