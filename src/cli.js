@@ -1,10 +1,8 @@
 #!/usr/bin/env node
 import { submitJob, getJobStatus, cancelJob } from "./queue.js";
 const [_, __, cmd, ...args] = process.argv;
-console.log(process.argv);
 if (cmd === "submit") {
   const command = args.join(" ");
-  console.log(args, command);
   submitJob(command);
 } else if (cmd === "status") {
   const jobID = args[0];
