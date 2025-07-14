@@ -6,11 +6,11 @@ import { v4 as uuidv4 } from "uuid";
 
 // redis operations
 const luaScript = fs.readFileSync(
-  path.join(process.cwd(), "src/jobs_lua_scripts/add-job.lua"),
+  path.join(process.cwd(), "./src/jobs_lua_scripts/add-job.lua"),
   "utf8"
 );
 const cancelLuaScript = fs.readFileSync(
-  path.join(process.cwd(), "src/jobs_lua_scripts/cancel-job.lua"),
+  path.join(process.cwd(), "./src/jobs_lua_scripts/cancel-job.lua"),
   "utf8"
 );
 
