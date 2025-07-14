@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { redis, JOB_TTL } from "./db/redis.js";
+import { redis } from "./db/redis.js";
 import { connect } from "./db/mongodb.js";
 import { v4 as uuidv4 } from "uuid";
 
@@ -34,8 +34,7 @@ export async function submitJob(command) {
       "jobs:hash",
       "jobs:queue",
       jobID,
-      payload,
-      JOB_TTL
+      payload
     );
     console.log(`Job Submitted: ${jobID} - Status: ${result}`);
   } catch (error) {
