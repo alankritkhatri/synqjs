@@ -43,7 +43,7 @@ There are **three ways** to use the Synq queue system:
 
 ##### Submit a Job
 ```bash
-node src/cli.js submit "echo Hello World"
+synq submit "echo Hello World" OR node src/cli.js submit "echo Hello World" 
 ```
 
 ##### Check Job Status

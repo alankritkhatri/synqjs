@@ -1,10 +1,13 @@
 {
   "name": "synqjs",
-  "version": "1.0.4",
+  "version": "1.0.8",
   "description": "",
   "license": "ISC",
   "author": "",
   "type": "module",
+  "bin": {
+    "synq": "./src/cli.js"
+  },
   "dependencies": {
     "dotenv": "^17.1.0",
     "ioredis": "^5.6.1",
@@ -16,9 +19,7 @@
     "test": "node tests/race-test.js",
     "test:race": "node tests/race-test.js",
     "test:load": "node tests/load-test.js",
-    "example": "node examples/simple-example.js",
-    "example:simple": "node examples/simple-example.js",
-    "example:full": "node examples/usage-example.js",
-    "example:real": "node examples/real-world-example.js"
+    "start": "node src/cli.js",
+    "worker": "node src/worker.js"
   }
 }
