@@ -41,18 +41,34 @@ There are **three ways** to use the Synq queue system:
 
 #### Method 1: CLI Interface (Command Line)
 
-##### Submit a Job
+The CLI can be used in multiple ways depending on how you install the package:
+
+##### Global Installation  (Recommended)
 ```bash
-synq submit "echo Hello World" OR node src/cli.js submit "echo Hello World" 
+# Install globally first
+npm install -g synqjs
+
+# Then use directly
+synq submit "echo Hello World"
+synq status job-1234567890
+synq cancel job-1234567890
 ```
 
-##### Check Job Status
+##### Local Installation with npx
 ```bash
+# Install locally
+npm install synqjs
+
+# Use with npx (no global install needed)
+npx synq submit "echo Hello World"
+npx synq status job-1234567890
+npx synq cancel job-1234567890
+```
+
+##### Direct node execution (Development)
+```bash
+node src/cli.js submit "echo Hello World"
 node src/cli.js status job-1234567890
-```
-
-##### Cancel a Job
-```bash
 node src/cli.js cancel job-1234567890
 ```
 
