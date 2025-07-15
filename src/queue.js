@@ -10,7 +10,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // redis operations
-const luaScript = fs.readFileSync(
+const addJobLuaScript = fs.readFileSync(
   path.join(__dirname, "jobs_lua_scripts", "add-job.lua"),
   "utf8"
 );
@@ -21,7 +21,7 @@ const cancelLuaScript = fs.readFileSync(
 
 redis.defineCommand("enqueueJob", {
   numberOfKeys: 2,
-  lua: luaScript,
+  lua: addJobLuaScript,
 });
 
 redis.defineCommand("cancelJob", {

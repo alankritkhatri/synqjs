@@ -1,3 +1,7 @@
+-- KEYS[1]: jobs hash
+-- ARGV[1]: job_id
+-- ARGV[2]: cancelledAt
+
 if redis.call("HEXISTS", KEYS[1], ARGV[1]) == 0 then
   return "not_found"
 end

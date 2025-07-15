@@ -2,9 +2,15 @@
 import  {redis}  from "./db/redis.js";
 import { connect } from "./db/mongodb.js";
 import { exec } from "child_process";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 
 async function runWorker() {
   let db;
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
 
   try {
     db = await connect();
@@ -15,43 +21,66 @@ async function runWorker() {
     db = null;
   }
 
+  const startJobsLuaScript = fs.readFileSync(
+    path.join(__dirname, "jobs_lua_scripts", "process-jobs.lua"),
+    "utf8"
+  );
+
+  redis.defineCommand("startJobs", {
+    numberOfKeys: 2,
+    lua: startJobsLuaScript,
+  });
+
   setInterval(async () => {
-    const jobID = await redis.lpop("jobs:queue");
-    if (!jobID) return;
+    const result = await redis.startJobs("jobs:hash", "jobs:queue");
 
-    const jobData = await redis.hget("jobs:hash", jobID);
-    const job = JSON.parse(jobData);
-
-    // Check if job was cancelled before execution
-    if (job.status === "cancelled") {
-      console.log(`Job ${jobID} was cancelled, skipping execution`);
+    if (!result) {
       return;
     }
 
-    const { command } = job;
-    console.log(`Executing ${jobID}: ${command}`);
+    const parsed = JSON.parse(result);
+
+    if (parsed.error) {
+      return;
+    }
+
+    const { jobID, command } = parsed;
+    console.log(`Processing job ${jobID}: ${command}`);
 
     if (db) {
       await db.insertOne({
         jobID,
         command,
         status: "running",
-        startedAt: new Date(),
       });
     }
 
     try {
       exec(command, async (err, stdout, stderr) => {
-        const result = {
+        const jobResult = {
           finishedAt: new Date(),
           status: err ? "failed" : "succeeded",
           output: stdout || stderr,
         };
 
+        // Update Redis with the completed job
+        await redis.hset(
+          "jobs:hash",
+          jobID,
+          JSON.stringify({
+            command,
+            createdAt: new Date(),
+            status: jobResult.status,
+            finishedAt: jobResult.finishedAt,
+            output: jobResult.output,
+          })
+        );
+
         if (db) {
-          await db.updateOne({ jobID }, { $set: result });
-          console.log(jobID, "completed");
+          await db.updateOne({ jobID }, { $set: jobResult });
         }
+
+        console.log(jobID, "completed");
       });
     } catch (error) {
       console.log(error);
