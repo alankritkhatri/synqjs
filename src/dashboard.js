@@ -5,13 +5,13 @@ export async function startDashboard() {
   console.log("📊 Synq Dashboard - Press Ctrl+C to exit\n");
   
   const refreshDashboard = async () => {
-    process.stdout.write("\x1b[H\x1b[2J"); // Clear screen
-    
+    process.stdout.write("\x1b[H\x1b[2J");
+
     const queueLength = await redis.llen("jobs:queue");
     const hashSize = await redis.hlen("jobs:hash");
-    const queueJobs = queueLength > 0 ? await redis.lrange("jobs:queue", 0, 9) : [];
+    const queueJobs =
+      queueLength > 0 ? await redis.lrange("jobs:queue", 0, 9) : [];
     
-    // Get all job IDs and their data for status breakdown
     const allJobIds = hashSize > 0 ? await redis.hkeys("jobs:hash") : [];
     const jobStatuses = { pending: 0, running: 0, completed: 0, failed: 0, cancelled: 0 };
     const runningJobs = [];
