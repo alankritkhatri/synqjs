@@ -87,4 +87,10 @@ export async function runWorker() {
   }, 1000);
 }
 
-runWorker().catch(console.error);
+const __filename = fileURLToPath(import.meta.url);
+const isMainModule =
+  process.argv[1] && path.resolve(process.argv[1]) === __filename;
+
+if (isMainModule) {
+  runWorker();
+}
