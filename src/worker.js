@@ -8,10 +8,10 @@ async function runWorker() {
 
   try {
     db = await connect();
-    console.log("✅ Connected to MongoDB");
+    console.log("Connected to MongoDB");
   } catch (error) {
-    console.log("❌ MongoDB connection failed:", error.message);
-    console.log("🔄 Running in Redis-only mode (no persistence)");
+    console.log("MongoDB connection failed:", error.message);
+    console.log("Running in Redis-only mode (no persistence)");
     db = null;
   }
 
@@ -50,11 +50,8 @@ async function runWorker() {
 
         if (db) {
           await db.updateOne({ jobID }, { $set: result });
+          console.log(jobID, "completed");
         }
-
-        // Clean up Redis data after execution
-        await redis.hdel("jobs:hash", jobID);
-        console.log(`${jobID} done: ${result.status} - Redis data cleaned up`);
       });
     } catch (error) {
       console.log(error);
