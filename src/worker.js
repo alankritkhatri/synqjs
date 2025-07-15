@@ -56,7 +56,7 @@ async function runWorker() {
     }
 
     try {
-      exec(command, async (err, stdout, stderr) => {
+      exec(command, { timeout: 10000 }, async (err, stdout, stderr) => {
         const jobResult = {
           finishedAt: new Date(),
           status: err ? "failed" : "succeeded",

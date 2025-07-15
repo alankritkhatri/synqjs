@@ -25,7 +25,7 @@ redis.defineCommand("enqueueJob", {
 });
 
 redis.defineCommand("cancelJob", {
-  numberOfKeys: 1,
+  numberOfKeys: 2,
   lua: cancelLuaScript,
 });
 
@@ -53,7 +53,12 @@ export async function submitJob(command) {
 
 export async function cancelJob(jobID) {
   try {
-    const result = await redis.cancelJob("jobs:hash", jobID, new Date().toISOString());
+    const result = await redis.cancelJob(
+      "jobs:hash",
+      "jobs:queue",
+      jobID,
+      new Date().toISOString()
+    );
     console.log(`Job ${jobID} cancellation: ${result}`);
     return result;
   } catch (error) {
