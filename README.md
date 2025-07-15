@@ -106,9 +106,26 @@ async function runBatchJobs() {
 runBatchJobs().catch(console.error);
 ```
 
-#### Method 3: Hybrid Approach (CLI + Programmatic)
+#### Method 3: Dashboard Monitoring
 
-You can combine both methods in your workflow - use scripts for batch operations and CLI for manual management:
+Monitor your jobs in real-time using the interactive dashboard:
+
+```bash
+# Start the dashboard
+synq dashboard
+# or for local development
+node src/cli.js dashboard
+```
+
+The dashboard provides:
+- **📊 Real-time Statistics** - Queue length, job counts by status
+- **🔄 Live Updates** - Auto-refreshes every 2 seconds
+- **📋 Job Details** - View currently running jobs and queue status
+- **🎯 Visual Interface** - Clean, organized display of system state
+
+#### Method 4: Hybrid Approach (CLI + Programmatic + Dashboard)
+
+You can combine all methods in your workflow:
 
 ```javascript
 // batch-processor.js
@@ -132,16 +149,19 @@ async function processBatch() {
 processBatch().catch(console.error);
 ```
 
-Then use CLI for monitoring and management:
+Then use CLI and dashboard for monitoring:
 ```bash
 # Run your batch script
 node batch-processor.js
 
-# Monitor jobs via CLI
-node src/cli.js status job-1234567890
+# Monitor jobs via dashboard (recommended)
+synq dashboard
+
+# Or check individual job status via CLI
+synq status job-1234567890
 
 # Cancel a job if needed
-node src/cli.js cancel job-1234567890
+synq cancel job-1234567890
 ```
 
 #### Start Worker (Required for all methods)
@@ -154,14 +174,17 @@ node src/worker.js
 ```mermaid
 graph TD
     CLI["🖥️ CLI Interface<br/>(cli.js)"] 
+    Dashboard["📊 Dashboard<br/>(dashboard.js)"]
     Queue["⚡ Queue System<br/>(queue.js)"]
     Redis[("🔴 Redis<br/>Job Queue")]
     Worker["🔄 Worker<br/>(worker.js)"]
     MongoDB[("🍃 MongoDB<br/>Job Persistence")]
     LuaScripts["📜 Lua Scripts<br/>Atomic Operations"]
     
-    CLI -->|submit job| Queue
-    CLI -->|status/cancel| Queue
+    CLI -->|submit/status/cancel| Queue
+    CLI -->|launch| Dashboard
+    Dashboard -->|monitor| Redis
+    Dashboard -->|real-time stats| Redis
     Queue -->|enqueue| Redis
     Queue -->|uses| LuaScripts
     LuaScripts -->|atomic ops| Redis
@@ -171,6 +194,7 @@ graph TD
     Queue -->|read status| MongoDB
     
     style CLI fill:#4A90E2,stroke:#333,stroke-width:2px,color:#fff
+    style Dashboard fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#fff
     style Queue fill:#7ED321,stroke:#333,stroke-width:2px,color:#fff
     style Redis fill:#F5A623,stroke:#333,stroke-width:2px,color:#fff
     style Worker fill:#BD10E0,stroke:#333,stroke-width:2px,color:#fff
@@ -181,16 +205,17 @@ graph TD
 
 ### Components
 
-- **CLI** - Command-line interface for job management
-- **Queue** - Redis-based job queuing with Lua scripts
-- **Worker** - Background job processor
+- **CLI** - Command-line interface for job management and dashboard
+- **Queue** - Redis-based job queuing with atomic Lua scripts
+- **Worker** - Background job processor with timeout handling
+- **Dashboard** - Real-time monitoring interface
 - **Databases** - Redis for queuing, MongoDB for persistence
 
 ## Testing
 
 ```bash
-npm test           # Race condition tests
-npm run test:load  # Load testing
+npm test              # Race condition and core functionality tests
+npm run test:race     # Race condition specific tests  
 ```
 
 ## Configuration

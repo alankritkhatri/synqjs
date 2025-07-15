@@ -7,7 +7,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 
-async function runWorker() {
+export async function runWorker() {
   let db;
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
@@ -62,7 +62,6 @@ async function runWorker() {
           status: err ? "failed" : "succeeded",
           output: stdout || stderr,
         };
-
         // Update Redis with the completed job
         await redis.hset(
           "jobs:hash",
