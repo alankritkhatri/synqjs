@@ -26,13 +26,13 @@ async function runWorker() {
     "utf8"
   );
 
-  redis.defineCommand("startJobs", {
+  redis.defineCommand("processJobs", {
     numberOfKeys: 2,
     lua: startJobsLuaScript,
   });
 
   setInterval(async () => {
-    const result = await redis.startJobs("jobs:hash", "jobs:queue");
+    const result = await redis.processJobs("jobs:hash", "jobs:queue");
 
     if (!result) {
       return;
