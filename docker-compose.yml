@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  # Redis for job queue
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+
+  # MongoDB for job persistence
+  mongodb:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    environment:
+      MONGODB_INITDB_ROOT_USERNAME: admin
+      MONGODB_INITDB_ROOT_PASSWORD: password
+      MONGODB_INITDB_DATABASE: jobSystem
+    volumes:
+      - mongodb_data:/data/db
+
+  # Synq API Server
+  synq-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.app
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      REDIS_URL: redis://redis:6379
+      MONGODB_URI: mongodb://admin:password@mongodb:27017/jobSystem?authSource=admin
+    depends_on:
+      - redis
+      - mongodb
+    restart: unless-stopped
+
+  # Synq Worker Server
+  synq-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: production
+      WORKER_PORT: 3001
+      REDIS_URL: redis://redis:6379
+      MONGODB_URI: mongodb://admin:password@mongodb:27017/jobSystem?authSource=admin
+      WORKER_TIMEOUT: 10000
+      WORKER_POLL_INTERVAL: 1000
+      AUTO_START_WORKER: true
+    depends_on:
+      - redis
+      - mongodb
+      - synq-api
+    restart: unless-stopped
+
+volumes:
+  redis_data:
+  mongodb_data: 
